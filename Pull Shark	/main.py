@@ -7,7 +7,7 @@ def replace_with_random_string(file_path):
     try:
         random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=10))  # Generating a random string of length 10
 
-        with open(file_path, 'w') as file:
+        with open(file_path, 'a') as file:
             file.write(random_string)
         
         print("Content replaced with random string successfully.")
