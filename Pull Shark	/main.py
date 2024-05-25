@@ -33,7 +33,8 @@ for i in range(N):
     
     # Create a pull request
     pull_request_title = f"Pull request {i}"
-    execute_command(f"gh pr create --title '{pull_request_title}' --base main --head {branch_name}")
+    pull_request_body = f"This pull request adds file {filename}."
+    execute_command(f"gh pr create --title '{pull_request_title}' --body '{pull_request_body}' --base main --head {branch_name}")
     
     # Wait for a few seconds before creating another pull request
     time.sleep(5)
