@@ -87,35 +87,41 @@ def add_git_remote(remote_name, remote_url):
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while adding remote: {e}")
 
-# File path
-file_path = "temp.txt"
-replace_with_random_string(file_path)
+# Function to repeat the process N times
+def repeat_process(N):
+    for _ in range(N):
+        # File path
+        file_path = "temp.txt"
+        replace_with_random_string(file_path)
 
-# New branch name
-new_branch_name = "new-branch"
-create_git_branch(new_branch_name)
+        # New branch name
+        new_branch_name = "new-branch"
+        create_git_branch(new_branch_name)
 
-# Add remote
-remote_name = "origin"
-remote_url = "git@github.com:JoneTheBuilder/Github-Badges.git"
-add_git_remote(remote_name, remote_url)
+        # Add remote
+        remote_name = "origin"
+        remote_url = "git@github.com:JoneTheBuilder/Github-Badges.git"
+        add_git_remote(remote_name, remote_url)
 
-# Base branch, pull request title, and description
-base_branch = "main"
-head_branch = new_branch_name
-title = "Title of your pull request"
-description = "Description of your pull request"
+        # Base branch, pull request title, and description
+        base_branch = "main"
+        head_branch = new_branch_name
+        title = "Title of your pull request"
+        description = "Description of your pull request"
 
-# Commit changes
-subprocess.run(["git", "add", "."])
-subprocess.run(["git", "commit", "-m", "Commit message"])
-subprocess.run(["git", "push", "origin", new_branch_name])  # Push changes to remote repository
+        # Commit changes
+        subprocess.run(["git", "add", "."])
+        subprocess.run(["git", "commit", "-m", "Commit message"])
+        subprocess.run(["git", "push", "origin", new_branch_name])  # Push changes to remote repository
 
-# Create pull request
-create_pull_request(base_branch, head_branch, title, description)
+        # Create pull request
+        create_pull_request(base_branch, head_branch, title, description)
 
-# Merge pull request
-merge_pull_request(head_branch)
+        # Merge pull request
+        merge_pull_request(head_branch)
 
-# Delete branch
-delete_git_branch(head_branch)
+        # Delete branch
+        delete_git_branch(head_branch)
+
+# Repeat the process 5 times
+repeat_process(10)
