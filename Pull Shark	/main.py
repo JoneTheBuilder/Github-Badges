@@ -2,6 +2,7 @@ import subprocess
 import random
 import string
 
+# Function to replace the content of a file with a random string
 def replace_with_random_string(file_path):
     try:
         random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=10))  # Generating a random string of length 10
@@ -16,6 +17,7 @@ def replace_with_random_string(file_path):
     except Exception as e:
         print(f"An error occurred while replacing content: {e}")
 
+# Function to create a new branch
 def create_git_branch(branch_name):
     try:
         # Check if the branch already exists
@@ -29,6 +31,7 @@ def create_git_branch(branch_name):
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while creating branch: {e}")
 
+# Function to create a pull request
 def create_pull_request(base_branch, head_branch, title, description):
     try:
         # GitHub CLI command to create a pull request
@@ -40,6 +43,7 @@ def create_pull_request(base_branch, head_branch, title, description):
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while creating pull request: {e}")
 
+# Function to merge a pull request
 def merge_pull_request(branch_name):
     try:
         # Git command to merge a pull request
@@ -51,6 +55,7 @@ def merge_pull_request(branch_name):
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while merging pull request: {e}")
 
+# Function to delete a branch
 def delete_git_branch(branch_name):
     try:
         # Check if the branch is checked out
@@ -65,14 +70,20 @@ def delete_git_branch(branch_name):
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while deleting branch: {e}")
 
+# Function to add a remote
 def add_git_remote(remote_name, remote_url):
     try:
-        # Git command to add a remote
-        command = ["git", "remote", "add", remote_name, remote_url]
+        # Check if the remote already exists
+        remotes = subprocess.run(["git", "remote", "-v"], capture_output=True, text=True)
+        if remote_name not in remotes.stdout:
+            # Git command to add a remote
+            command = ["git", "remote", "add", remote_name, remote_url]
 
-        # Run the command
-        subprocess.run(command, check=True)
-        print(f"Remote '{remote_name}' added successfully.")
+            # Run the command
+            subprocess.run(command, check=True)
+            print(f"Remote '{remote_name}' added successfully.")
+        else:
+            print(f"Remote '{remote_name}' already exists.")
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while adding remote: {e}")
 
@@ -95,13 +106,16 @@ head_branch = new_branch_name
 title = "Title of your pull request"
 description = "Description of your pull request"
 
+# Commit changes
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", "Commit message"])
+subprocess.run(["git", "push", "origin", new_branch_name])  # Push changes to remote repository
+
 # Create pull request
 create_pull_request(base_branch, head_branch, title, description)
 
 # Merge pull request
-pull_request_branch = head_branch
-merge_pull_request(pull_request_branch)
+merge_pull_request(head_branch)
 
 # Delete branch
-branch_to_delete = pull_request_branch
-delete_git_branch(branch_to_delete)
+delete_git_branch(head_branch)
