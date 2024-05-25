@@ -39,13 +39,15 @@ for i in range(N):
     # Merge the pull request
     execute_command(f"gh pr merge --auto --merge '{pull_request_title}'")
 
+    # Delete the branch
+    execute_command(f"git branch -d {branch_name}")
+
+    # Clean the working directory
+    execute_command("git reset --hard")
+    execute_command("git clean -df")
+
     # Wait for a few seconds before creating another pull request
     time.sleep(5)
-
-# Delete merged branches
-for i in range(N):
-    branch_name = f"branch_{i}"
-    execute_command(f"git branch -d {branch_name}")
 
 # Prune remote branches
 execute_command("git fetch -p")
