@@ -112,7 +112,12 @@ def repeat_process(N):
         # Commit changes
         subprocess.run(["git", "add", "."])
         subprocess.run(["git", "commit", "-m", "Commit message"])
-        subprocess.run(["git", "push", "origin", new_branch_name])  # Push changes to remote repository
+        
+        # Pull changes from remote repository
+        subprocess.run(["git", "pull", "origin", base_branch])
+        
+        # Push changes to remote repository
+        subprocess.run(["git", "push", "origin", new_branch_name])  
 
         # Create pull request
         create_pull_request(base_branch, head_branch, title, description)
