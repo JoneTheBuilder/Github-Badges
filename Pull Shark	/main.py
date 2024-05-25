@@ -41,3 +41,11 @@ for i in range(N):
 
 # Merge pull requests
 execute_command("gh pr merge --auto")
+
+# Delete merged branches
+for i in range(N):
+    branch_name = f"branch_{i}"
+    execute_command(f"git branch -d {branch_name}")
+
+# Prune remote branches
+execute_command("git fetch -p")
