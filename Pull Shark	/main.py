@@ -36,11 +36,11 @@ for i in range(N):
     pull_request_body = f"This pull request adds file {filename}."
     execute_command(f"gh pr create --title '{pull_request_title}' --body '{pull_request_body}' --base main --head {branch_name}")
     
+    # Merge the pull request
+    execute_command(f"gh pr merge --auto --merge '{pull_request_title}'")
+
     # Wait for a few seconds before creating another pull request
     time.sleep(5)
-
-# Merge pull requests
-execute_command("gh pr merge --auto")
 
 # Delete merged branches
 for i in range(N):
