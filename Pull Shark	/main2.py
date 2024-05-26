@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import subprocess
 import sys
 import json
@@ -57,7 +58,7 @@ def merge_pull_request(pr_number):
         print(f"Skipping PR #{pr_number} due to merge conflicts or other issues.")
 
 def main(n):
-    for i in range(1, n + 1):
+    for i in tqdm(range(1, n + 1), leave=False, desc="Pull requests:"):
         branch_name = f"feature-branch-{i}"
         delete_branch(branch_name)  # Ensure the branch does not exist
         create_branch(branch_name)
