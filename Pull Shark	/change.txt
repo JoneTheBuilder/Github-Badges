@@ -4,3 +4,4 @@ Changes in branch feature-branch-2
 Changes in branch feature-branch-3
 Changes in branch feature-branch-4
 Changes in branch feature-branch-5
+Changes in branch feature-branch-6
