@@ -47,15 +47,24 @@ def create_pull_request(branch_name):
     for attempt in range(3):  # Retry up to 3 times
         result = run_command(f"gh pr create --base main --head {branch_name} --title 'PR from {branch_name}' --body 'This is an automated PR from {branch_name}'")
         if result is not None:
-            return
+            return True
         print(f"Retrying PR creation for {branch_name}...")
         time.sleep(5 * (attempt + 1))  # Exponential backoff
+    return False
 
 def merge_pull_request(pr_number):
     """Merge the pull request using GitHub CLI."""
     result = run_command(f"gh pr merge {pr_number} --squash --delete-branch")
     if result is None:
         print(f"Skipping PR #{pr_number} due to merge conflicts or other issues.")
+
+def merge_all_open_pull_requests():
+    """Merge all open pull requests."""
+    prs = run_command("gh pr list --state open --json number")
+    if prs:
+        pr_numbers = [pr["number"] for pr in json.loads(prs)]
+        for pr_number in pr_numbers:
+            merge_pull_request(pr_number)
 
 def main(n):
     for i in tqdm(range(1, n + 1), leave=False, desc="Pull requests:"):
@@ -64,15 +73,13 @@ def main(n):
         create_branch(branch_name)
         make_changes(branch_name)
         push_branch(branch_name)
-        create_pull_request(branch_name)
+        if not create_pull_request(branch_name):
+            print("Error occurred while creating PR, attempting to merge all open PRs...")
+            merge_all_open_pull_requests()
+            # Retry the creation of the current pull request after merging
+            if not create_pull_request(branch_name):
+                print(f"Failed to create PR for {branch_name} after merging open PRs.")
         time.sleep(2)  # Delay to avoid hitting rate limit
-    
-    prs = run_command("gh pr list --state open --json number")
-    if prs:
-        pr_numbers = [pr["number"] for pr in json.loads(prs)]
-        
-        for pr_number in pr_numbers:
-            merge_pull_request(pr_number)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
