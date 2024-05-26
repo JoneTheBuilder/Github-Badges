@@ -1,7 +1,7 @@
 import subprocess
 import sys
 import json
-from tqdm import tqdm
+import time
 
 def run_command(command):
     """Run a shell command and return the output."""
@@ -43,7 +43,12 @@ def push_branch(branch_name):
 
 def create_pull_request(branch_name):
     """Create a pull request using GitHub CLI."""
-    run_command(f"gh pr create --base main --head {branch_name} --title 'PR from {branch_name}' --body 'This is an automated PR from {branch_name}'")
+    for attempt in range(3):  # Retry up to 3 times
+        result = run_command(f"gh pr create --base main --head {branch_name} --title 'PR from {branch_name}' --body 'This is an automated PR from {branch_name}'")
+        if result is not None:
+            return
+        print(f"Retrying PR creation for {branch_name}...")
+        time.sleep(5 * (attempt + 1))  # Exponential backoff
 
 def merge_pull_request(pr_number):
     """Merge the pull request using GitHub CLI."""
@@ -52,13 +57,14 @@ def merge_pull_request(pr_number):
         print(f"Skipping PR #{pr_number} due to merge conflicts or other issues.")
 
 def main(n):
-    for i in tqdm(range(1, n + 1), leave=False, desc="Pull requests"):
+    for i in range(1, n + 1):
         branch_name = f"feature-branch-{i}"
         delete_branch(branch_name)  # Ensure the branch does not exist
         create_branch(branch_name)
         make_changes(branch_name)
         push_branch(branch_name)
         create_pull_request(branch_name)
+        time.sleep(2)  # Delay to avoid hitting rate limit
     
     prs = run_command("gh pr list --state open --json number")
     if prs:
